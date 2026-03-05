@@ -1,0 +1,8 @@
+target/
+.claude/
+*.class
+.DS_Store
+*.iml
+.idea/
+client/node_modules/
+client/dist/
