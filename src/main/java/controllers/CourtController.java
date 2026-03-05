@@ -39,6 +39,17 @@ public class CourtController {
         return ResponseEntity.created(URI.create("/api/courts/" + saved.getId())).body(saved);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Court> update(@PathVariable Long id, @RequestBody Court updated) {
+        return courtRepository.findById(id).map(court -> {
+            if (updated.getName() != null) court.setName(updated.getName());
+            if (updated.getCity() != null) court.setCity(updated.getCity());
+            if (updated.getOutdoor() != null) court.setOutdoor(updated.getOutdoor());
+            if (updated.getImageUrl() != null) court.setImageUrl(updated.getImageUrl());
+            return ResponseEntity.ok(courtRepository.save(court));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (!courtRepository.existsById(id)) return ResponseEntity.notFound().build();
