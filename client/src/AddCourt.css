@@ -1,0 +1,56 @@
+.add-court-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 1rem;
+  color: white;
+}
+
+.form input,
+.form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  border: none;
+  font-size: 1rem;
+}
+
+.submit-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.submitted-msg {
+  margin-top: 1rem;
+  color: #28a745;
+  font-weight: bold;
+}
+
+.court-entry {
+  background-color: #222;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.court-entry img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.preview {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
