@@ -15,6 +15,7 @@ public class Court {
 
     private String city;
     private Boolean outdoor = true;
+    private String imageUrl;
 
     public Court() {}
 
@@ -22,8 +23,10 @@ public class Court {
     public String getName() { return name; }
     public String getCity() { return city; }
     public Boolean getOutdoor() { return outdoor; }
+    public String getImageUrl() { return imageUrl; }
 
     public void setName(String name) { this.name = name; }
     public void setCity(String city) { this.city = city; }
     public void setOutdoor(Boolean outdoor) { this.outdoor = outdoor; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }
