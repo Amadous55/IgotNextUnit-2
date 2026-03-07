@@ -52,6 +52,12 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Security (BCrypt) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
