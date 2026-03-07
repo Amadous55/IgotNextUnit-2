@@ -3,6 +3,7 @@ import './HomePage.css';
 import courts from './courts.json';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from './AuthContext';
+import CourtMap from './CourtMap';
 
 // Normalize court data
 const normalizedCourts = courts.map(court => ({
@@ -95,12 +96,9 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* Embedded Map */}
+        {/* Interactive Map */}
         <div className="map-view">
-          <iframe
-            title="map"
-            src="https://maps.google.com/maps?q=Washington%20DC&t=&z=13&ie=UTF8&iwloc=&output=embed"
-          ></iframe>
+          <CourtMap />
         </div>
       </section>
 
