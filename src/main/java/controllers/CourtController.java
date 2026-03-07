@@ -46,6 +46,8 @@ public class CourtController {
             if (updated.getCity() != null) court.setCity(updated.getCity());
             if (updated.getOutdoor() != null) court.setOutdoor(updated.getOutdoor());
             if (updated.getImageUrl() != null) court.setImageUrl(updated.getImageUrl());
+            if (updated.getLatitude() != null) court.setLatitude(updated.getLatitude());
+            if (updated.getLongitude() != null) court.setLongitude(updated.getLongitude());
             return ResponseEntity.ok(courtRepository.save(court));
         }).orElse(ResponseEntity.notFound().build());
     }
