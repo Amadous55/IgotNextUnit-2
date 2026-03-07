@@ -1,0 +1,157 @@
+.court-detail-page {
+  max-width: 700px;
+  margin: 0 auto;
+  color: white;
+  min-height: 100vh;
+}
+
+.detail-hero-img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+
+.detail-content {
+  padding: 24px 20px;
+}
+
+.detail-back-btn {
+  background: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  transition: background 0.2s;
+}
+
+.detail-back-btn:hover {
+  background: #3a3a3a;
+  border-color: #f97316;
+}
+
+.detail-name {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 14px 0;
+}
+
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  color: #aaa;
+  font-size: 1rem;
+}
+
+.detail-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.detail-badge.outdoor {
+  background: #0f2a0f;
+  color: #4ade80;
+}
+
+.detail-badge.indoor {
+  background: #0f1f2a;
+  color: #60a5fa;
+}
+
+.detail-count {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 28px;
+  padding: 18px 20px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  border: 1px solid #2a2a2a;
+}
+
+.detail-timestamp {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 6px;
+}
+
+.detail-checkin-btn {
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 16px 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.detail-checkin-btn:hover {
+  background: #ea6c0a;
+}
+
+.detail-checkin-btn.checkout {
+  background: #3a3a3a;
+  border: 1px solid #555;
+}
+
+.detail-checkin-btn.checkout:hover {
+  background: #444;
+}
+
+.rating-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  border: 1px solid #2a2a2a;
+}
+
+.stars-display {
+  display: flex;
+  gap: 4px;
+}
+
+.star {
+  font-size: 2rem;
+  color: #444;
+  cursor: pointer;
+  transition: color 0.15s, transform 0.15s;
+  line-height: 1;
+}
+
+.star.filled {
+  color: #f97316;
+}
+
+.star:not(.locked):hover {
+  transform: scale(1.2);
+}
+
+.star.locked {
+  cursor: default;
+}
+
+.rating-label {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.detail-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #666;
+  font-size: 1.1rem;
+}

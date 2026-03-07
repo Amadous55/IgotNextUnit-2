@@ -63,6 +63,50 @@ body, html {
   object-fit: cover;
 }
 
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-username {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.nav-logout-btn {
+  background: #333;
+  color: #aaa;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-logout-btn:hover {
+  background: #444;
+  color: white;
+}
+
+.nav-login-btn {
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-login-btn:hover {
+  background: #ea6c0a;
+}
+
 /* Hero */
 .hero {
   background-image: url('https://images.pexels.com/photos/28773512/pexels-photo-28773512.jpeg');

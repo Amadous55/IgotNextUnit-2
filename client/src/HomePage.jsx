@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import './HomePage.css';
 import courts from './courts.json';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from './AuthContext';
 
 // Normalize court data
 const normalizedCourts = courts.map(court => ({
@@ -21,6 +22,8 @@ const normalizedCourts = courts.map(court => ({
 
 const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const filteredCourts = normalizedCourts.filter((court) => {
     const query = searchQuery.toLowerCase();
@@ -47,14 +50,14 @@ const HomePage = () => {
           <Link to="/courts">
             <button className="find-courts-btn">Find Courts</button>
           </Link>
-          <Link to="/profile">
-            <img
-              src="/profile-icon.png"
-              alt="Profile"
-              className="profile-avatar"
-              style={{ cursor: "pointer" }}
-            />
-          </Link>
+          {user ? (
+            <div className="nav-user">
+              <span className="nav-username">👋 {user.username}</span>
+              <button className="nav-logout-btn" onClick={logout}>Log Out</button>
+            </div>
+          ) : (
+            <button className="nav-login-btn" onClick={() => navigate('/login')}>Log In</button>
+          )}
         </div>
       </header>
 
