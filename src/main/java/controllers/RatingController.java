@@ -7,6 +7,7 @@ import com.Amadou.igotnext.repositories.RatingRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,6 +24,7 @@ public class RatingController {
 
     public static class CreateRatingRequest {
         public Integer score;
+        public String username;
     }
 
     // POST /api/courts/{courtId}/ratings
@@ -36,7 +38,9 @@ public class RatingController {
         Court court = courtRepository.findById(courtId).orElse(null);
         if (court == null) return ResponseEntity.notFound().build();
 
-        Rating saved = ratingRepository.save(new Rating(court, body.score));
+        Rating rating = new Rating(court, body.score);
+        if (body.username != null) rating.setUsername(body.username);
+        Rating saved = ratingRepository.save(rating);
         return ResponseEntity.ok(saved);
     }
 
@@ -53,5 +57,12 @@ public class RatingController {
                 "average", Math.round(avg * 10.0) / 10.0,
                 "count", count
         ));
+    }
+
+    // GET /api/users/{username}/ratings
+    @GetMapping("/users/{username}/ratings")
+    public ResponseEntity<List<Rating>> getRatingsForUser(@PathVariable String username) {
+        List<Rating> ratings = ratingRepository.findByUsernameOrderByCreatedAtDesc(username);
+        return ResponseEntity.ok(ratings);
     }
 }

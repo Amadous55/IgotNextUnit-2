@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CourtsPage.css';
+import { useToast } from './useToast';
+import { useAuth } from './AuthContext';
 
 function timeAgo(isoString) {
   if (!isoString) return 'No recent activity';
@@ -17,9 +19,14 @@ function timeAgo(isoString) {
 const CourtsPage = () => {
   const navigate = useNavigate();
   const [courts, setCourts] = useState([]);
-  const [checkins, setCheckins] = useState({}); // { courtId: checkinId }
+  const [checkins, setCheckins] = useState(() => {
+    const stored = localStorage.getItem('igotNext_checkins');
+    return stored ? JSON.parse(stored) : {};
+  }); // { courtId: checkinId }
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const { showToast, ToastContainer } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetch('/api/courts')
@@ -53,11 +60,16 @@ const CourtsPage = () => {
     fetch(`/api/courts/${id}/checkins`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ partySize: 1 }),
+      body: JSON.stringify({ partySize: 1, username: user?.username || null }),
     })
       .then(res => res.json())
       .then(checkin => {
-        setCheckins(prev => ({ ...prev, [id]: checkin.id }));
+        setCheckins(prev => {
+          const next = { ...prev, [id]: checkin.id };
+          localStorage.setItem('igotNext_checkins', JSON.stringify(next));
+          return next;
+        });
+        showToast('✅ Checked in! You got next.');
         fetch(`/api/courts/${id}/live-count`)
           .then(res => res.json())
           .then(data => {
@@ -72,7 +84,13 @@ const CourtsPage = () => {
     if (!checkinId) return;
     fetch(`/api/checkins/${checkinId}`, { method: 'DELETE' })
       .then(() => {
-        setCheckins(prev => { const next = { ...prev }; delete next[id]; return next; });
+        setCheckins(prev => {
+          const next = { ...prev };
+          delete next[id];
+          localStorage.setItem('igotNext_checkins', JSON.stringify(next));
+          return next;
+        });
+        showToast('🚪 Checked out. See you next time!');
         fetch(`/api/courts/${id}/live-count`)
           .then(res => res.json())
           .then(data => {
@@ -93,6 +111,7 @@ const CourtsPage = () => {
 
   return (
     <div className="courts-page">
+      <ToastContainer />
       <div className="courts-header">
         <button className="back-btn" onClick={() => navigate('/')}>← Back</button>
         <h1>Nearby Courts</h1>
