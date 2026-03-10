@@ -18,6 +18,9 @@ public class Rating {
     @Column(nullable = false)
     private Integer score; // 1-5
 
+    @Column(nullable = true)
+    private String username;
+
     @Column(nullable = false)
     private Instant createdAt;
 
@@ -41,4 +44,6 @@ public class Rating {
 
     public void setCourt(Court court) { this.court = court; }
     public void setScore(Integer score) { this.score = score; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 }

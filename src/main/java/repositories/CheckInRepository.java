@@ -14,4 +14,6 @@ public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
     long sumPartySizeAfter(@Param("courtId") Long courtId, @Param("after") Instant after);
 
     List<CheckIn> findByCourt_IdOrderByCreatedAtDesc(Long courtId);
+
+    List<CheckIn> findByUsernameOrderByCreatedAtDesc(String username);
 }
