@@ -45,7 +45,7 @@
   padding: 12px 16px;
   border-radius: 10px;
   border: 1px solid #333;
-  background: #1e1e1e;
+  background: var(--bg-card, #1e1e1e);
   color: white;
   font-size: 1rem;
   box-sizing: border-box;
@@ -70,7 +70,7 @@
   padding: 8px 20px;
   border-radius: 20px;
   border: 1px solid #444;
-  background: #1e1e1e;
+  background: var(--bg-card, #1e1e1e);
   color: #aaa;
   cursor: pointer;
   font-size: 0.9rem;
@@ -95,12 +95,12 @@
 }
 
 .court-card-api {
-  background: #1a1a1a;
+  background: var(--bg-card, #1a1a1a);
   border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--border-color, #2a2a2a);
 }
 
 .court-card-api:hover {
