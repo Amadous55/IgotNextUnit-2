@@ -19,18 +19,19 @@ function timeAgo(isoString) {
 const CourtsPage = () => {
   const navigate = useNavigate();
   const [courts, setCourts] = useState([]);
-  const [checkins, setCheckins] = useState(() => {
-    const stored = localStorage.getItem('igotNext_checkins');
-    return stored ? JSON.parse(stored) : {};
-  }); // { courtId: checkinId }
+  const [activeCheckin, setActiveCheckin] = useState(() => {
+    const stored = localStorage.getItem('igotNext_active_checkin');
+    return stored ? JSON.parse(stored) : null;
+  }); // { courtId, checkinId } | null
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const [loadError, setLoadError] = useState(false);
   const { showToast, ToastContainer } = useToast();
   const { user } = useAuth();
 
   useEffect(() => {
     fetch('/api/courts')
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('Failed to load courts'); return res.json(); })
       .then(data => {
         const courtsWithCount = data.map(court => ({ ...court, liveCount: 0, avgRating: 0, ratingCount: 0, lastActive: null }));
         setCourts(courtsWithCount);
@@ -53,50 +54,45 @@ const CourtsPage = () => {
               setCourts(prev => prev.map(c => c.id === court.id ? { ...c, lastActive: latest } : c));
             });
         });
-      });
+      })
+      .catch(() => setLoadError(true));
   }, []);
 
   const handleCheckIn = (id) => {
+    if (!user) {
+      showToast('🔒 Please log in to check in to a court.', 'error');
+      return;
+    }
+
+    // Auto-checkout from previous court if different
+    if (activeCheckin && activeCheckin.courtId !== id) {
+      fetch(`/api/checkins/${activeCheckin.checkinId}`, { method: 'DELETE' });
+      setCourts(prev => prev.map(c => c.id === activeCheckin.courtId ? { ...c, liveCount: Math.max(0, c.liveCount - 1) } : c));
+    }
+
     fetch(`/api/courts/${id}/checkins`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ partySize: 1, username: user?.username || null }),
+      body: JSON.stringify({ partySize: 1, username: user.username }),
     })
       .then(res => res.json())
       .then(checkin => {
-        setCheckins(prev => {
-          const next = { ...prev, [id]: checkin.id };
-          localStorage.setItem('igotNext_checkins', JSON.stringify(next));
-          return next;
-        });
+        const next = { courtId: id, checkinId: checkin.id };
+        setActiveCheckin(next);
+        localStorage.setItem('igotNext_active_checkin', JSON.stringify(next));
+        setCourts(prev => prev.map(c => c.id === id ? { ...c, liveCount: c.liveCount + 1 } : c));
         showToast('✅ Checked in! You got next.');
-        fetch(`/api/courts/${id}/live-count`)
-          .then(res => res.json())
-          .then(data => {
-            const count = typeof data === 'object' ? data.playerCount : data;
-            setCourts(prev => prev.map(c => c.id === id ? { ...c, liveCount: count } : c));
-          });
       });
   };
 
   const handleCheckOut = (id) => {
-    const checkinId = checkins[id];
-    if (!checkinId) return;
-    fetch(`/api/checkins/${checkinId}`, { method: 'DELETE' })
+    if (!activeCheckin) return;
+    fetch(`/api/checkins/${activeCheckin.checkinId}`, { method: 'DELETE' })
       .then(() => {
-        setCheckins(prev => {
-          const next = { ...prev };
-          delete next[id];
-          localStorage.setItem('igotNext_checkins', JSON.stringify(next));
-          return next;
-        });
+        setActiveCheckin(null);
+        localStorage.removeItem('igotNext_active_checkin');
+        setCourts(prev => prev.map(c => c.id === id ? { ...c, liveCount: Math.max(0, c.liveCount - 1) } : c));
         showToast('🚪 Checked out. See you next time!');
-        fetch(`/api/courts/${id}/live-count`)
-          .then(res => res.json())
-          .then(data => {
-            const count = typeof data === 'object' ? data.playerCount : data;
-            setCourts(prev => prev.map(c => c.id === id ? { ...c, liveCount: count } : c));
-          });
       });
   };
 
@@ -108,6 +104,18 @@ const CourtsPage = () => {
       filter === 'all' || (filter === 'outdoor' ? c.outdoor : !c.outdoor);
     return matchesSearch && matchesFilter;
   });
+
+  if (loadError) return (
+    <div className="courts-page">
+      <div className="courts-header">
+        <button className="back-btn" onClick={() => navigate('/')}>← Back</button>
+        <h1>Nearby Courts</h1>
+      </div>
+      <p style={{ textAlign: 'center', color: '#888', marginTop: '60px' }}>
+        Unable to load courts. Make sure the server is running.
+      </p>
+    </div>
+  );
 
   return (
     <div className="courts-page">
@@ -143,7 +151,7 @@ const CourtsPage = () => {
           <CourtCard
             key={court.id}
             court={court}
-            checkedIn={!!checkins[court.id]}
+            checkedIn={activeCheckin?.courtId === court.id}
             onCheckIn={() => handleCheckIn(court.id)}
             onCheckOut={() => handleCheckOut(court.id)}
             onClick={() => navigate(`/court/${court.id}`)}

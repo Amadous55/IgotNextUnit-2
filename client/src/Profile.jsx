@@ -21,6 +21,7 @@ const Profile = () => {
   const [checkins, setCheckins] = useState([]);
   const [ratings, setRatings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -29,16 +30,28 @@ const Profile = () => {
     }
 
     Promise.all([
-      fetch(`/api/users/${user.username}/checkins`).then(r => r.json()),
-      fetch(`/api/users/${user.username}/ratings`).then(r => r.json()),
+      fetch(`/api/users/${user.username}/checkins`).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
+      fetch(`/api/users/${user.username}/ratings`).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
     ]).then(([checkinsData, ratingsData]) => {
       setCheckins(checkinsData);
       setRatings(ratingsData);
+      setLoading(false);
+    }).catch(() => {
+      setFetchError(true);
       setLoading(false);
     });
   }, [user, navigate]);
 
   if (!user) return null;
+
+  if (fetchError) return (
+    <div className="profile-page">
+      <button className="profile-back-btn" onClick={() => navigate('/')}>← Back</button>
+      <p style={{ color: '#888', textAlign: 'center', marginTop: '60px' }}>
+        Could not load profile data. Make sure the server is running.
+      </p>
+    </div>
+  );
 
   const initials = user.username.slice(0, 2).toUpperCase();
 
