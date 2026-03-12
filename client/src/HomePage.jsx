@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import './HomePage.css';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from './AuthContext';
+import { useTheme } from './ThemeContext';
 import CourtMap from './CourtMap';
 
 const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [courts, setCourts] = useState([]);
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,6 +40,13 @@ const HomePage = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="nav-actions">
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           <Link to="/courts">
             <button className="find-courts-btn">Find Courts</button>
           </Link>
