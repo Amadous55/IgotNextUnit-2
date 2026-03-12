@@ -3,48 +3,82 @@
   margin: 0 auto;
   color: white;
   min-height: 100vh;
+  background: var(--bg-primary, #0f0f1a);
+}
+
+/* ── Hero ── */
+.detail-hero {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
 }
 
 .detail-hero-img {
   width: 100%;
-  height: 280px;
+  height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.detail-content {
-  padding: 24px 20px;
+.detail-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.05) 35%,
+    rgba(0, 0, 0, 0.82) 100%
+  );
+}
+
+.detail-hero-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 24px 28px;
+}
+
+.detail-hero-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-name {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin: 0;
+  color: white;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  line-height: 1.15;
+}
+
+.detail-location {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 .detail-back-btn {
-  background: #2a2a2a;
+  background: rgba(0, 0, 0, 0.45);
   color: white;
-  border: 1px solid #444;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  margin-bottom: 20px;
+  backdrop-filter: blur(4px);
+  align-self: flex-start;
   transition: background 0.2s;
 }
 
 .detail-back-btn:hover {
-  background: #3a3a3a;
-  border-color: #f97316;
-}
-
-.detail-name {
-  font-size: 2rem;
-  font-weight: 800;
-  margin: 0 0 14px 0;
-}
-
-.detail-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  color: #aaa;
-  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.65);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .detail-badge {
@@ -52,31 +86,39 @@
   border-radius: 12px;
   font-size: 0.85rem;
   font-weight: 600;
+  align-self: flex-start;
+  backdrop-filter: blur(4px);
 }
 
 .detail-badge.outdoor {
-  background: #0f2a0f;
+  background: rgba(15, 42, 15, 0.85);
   color: #4ade80;
 }
 
 .detail-badge.indoor {
-  background: #0f1f2a;
+  background: rgba(15, 31, 42, 0.85);
   color: #60a5fa;
+}
+
+/* ── Content below hero ── */
+.detail-content {
+  padding: 24px 20px;
+  background: var(--bg-primary, #0f0f1a);
 }
 
 .detail-count {
   font-size: 1.1rem;
-  color: #ccc;
+  color: var(--text-secondary, #ccc);
   margin-bottom: 28px;
   padding: 18px 20px;
-  background: #1a1a1a;
+  background: var(--bg-card, #1a1a1a);
   border-radius: 12px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--border-color, #2a2a2a);
 }
 
 .detail-timestamp {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-muted, #666);
   margin-top: 6px;
 }
 
@@ -98,23 +140,26 @@
 }
 
 .detail-checkin-btn.checkout {
-  background: #3a3a3a;
+  background: var(--bg-card, #3a3a3a);
   border: 1px solid #555;
+  color: var(--text-secondary, #ccc);
 }
 
 .detail-checkin-btn.checkout:hover {
   background: #444;
 }
 
+/* ── Rating ── */
 .rating-section {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
   padding: 16px 20px;
-  background: #1a1a1a;
+  background: var(--bg-card, #1a1a1a);
   border-radius: 12px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--border-color, #2a2a2a);
+  flex-wrap: wrap;
 }
 
 .stars-display {
@@ -143,15 +188,52 @@
 }
 
 .rating-label {
-  color: #aaa;
+  color: var(--text-secondary, #aaa);
   font-size: 0.9rem;
 }
 
+/* ── Loading / Error ── */
 .detail-loading {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
   color: #666;
   font-size: 1.1rem;
+  background: var(--bg-primary, #0f0f1a);
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .detail-hero {
+    height: 300px;
+  }
+
+  .detail-name {
+    font-size: 1.7rem;
+  }
+
+  .detail-hero-content {
+    padding: 14px 16px 20px;
+  }
+
+  .detail-content {
+    padding: 16px 14px;
+  }
+
+  .rating-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .star {
+    font-size: 1.7rem;
+  }
+
+  .detail-checkin-btn {
+    font-size: 1rem;
+    padding: 14px 20px;
+  }
 }
