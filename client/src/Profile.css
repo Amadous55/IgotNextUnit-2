@@ -1,6 +1,6 @@
 .profile-page {
   min-height: 100vh;
-  background: #0f0f1a;
+  background: var(--bg-primary, #0f0f1a);
   color: white;
   padding: 24px 20px 60px;
   max-width: 700px;
@@ -24,8 +24,8 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  background: #1a1a2e;
-  border: 1px solid #2a2a40;
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #2a2a40);
   border-radius: 16px;
   padding: 28px;
   margin-bottom: 20px;
@@ -79,8 +79,8 @@
 }
 
 .stat-card {
-  background: #1a1a2e;
-  border: 1px solid #2a2a40;
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #2a2a40);
   border-radius: 12px;
   padding: 20px 12px;
   text-align: center;
@@ -103,7 +103,7 @@
 }
 
 .profile-favorite {
-  background: #1a1a2e;
+  background: var(--bg-secondary, #1a1a2e);
   border: 1px solid #f97316;
   border-radius: 10px;
   padding: 14px 20px;
@@ -125,8 +125,8 @@
 }
 
 .profile-section {
-  background: #1a1a2e;
-  border: 1px solid #2a2a40;
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #2a2a40);
   border-radius: 14px;
   padding: 22px;
 }
@@ -159,7 +159,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #12121f;
+  background: var(--bg-card, #12121f);
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.2s;
