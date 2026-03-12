@@ -43,9 +43,9 @@ const HomePage = () => {
           <button
             className="theme-toggle-btn"
             onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
           >
-            {theme === 'dark' ? '☀️' : '🌙'}
+            {theme === 'light' ? '🌙' : '☀️'}
           </button>
           <Link to="/courts">
             <button className="find-courts-btn">Find Courts</button>
