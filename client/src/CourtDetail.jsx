@@ -66,7 +66,6 @@ const CourtDetail = () => {
       return;
     }
 
-    // If checked into a different court, auto-checkout first
     const stored = localStorage.getItem('igotNext_active_checkin');
     if (stored) {
       const prev = JSON.parse(stored);
@@ -131,22 +130,29 @@ const CourtDetail = () => {
   return (
     <div className="court-detail-page">
       <ToastContainer />
-      <img
-        src={court.imageUrl || fallbackImg}
-        alt={court.name}
-        className="detail-hero-img"
-      />
-      <div className="detail-content">
-        <button className="detail-back-btn" onClick={() => navigate(-1)}>← Back</button>
-        <h1 className="detail-name">{court.name}</h1>
-        <div className="detail-meta">
-          <span>📍 {court.city || 'N/A'}</span>
-          <span className={`detail-badge ${court.outdoor ? 'outdoor' : 'indoor'}`}>
-            {court.outdoor ? '☀️ Outdoor' : '🏠 Indoor'}
-          </span>
-        </div>
 
-        {/* Rating display */}
+      {/* Hero — full-bleed image with overlaid name */}
+      <div className="detail-hero">
+        <img
+          src={court.imageUrl || fallbackImg}
+          alt={court.name}
+          className="detail-hero-img"
+        />
+        <div className="detail-hero-overlay" />
+        <div className="detail-hero-content">
+          <button className="detail-back-btn" onClick={() => navigate(-1)}>← Back</button>
+          <div className="detail-hero-bottom">
+            <span className={`detail-badge ${court.outdoor ? 'outdoor' : 'indoor'}`}>
+              {court.outdoor ? '☀️ Outdoor' : '🏠 Indoor'}
+            </span>
+            <h1 className="detail-name">{court.name}</h1>
+            <p className="detail-location">📍 {court.city || 'N/A'}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Content below hero */}
+      <div className="detail-content">
         <div className="rating-section">
           <div className="stars-display">
             {[1, 2, 3, 4, 5].map(star => (
@@ -174,6 +180,7 @@ const CourtDetail = () => {
           🏀 <strong>{liveCount}</strong> players on the court right now
           <div className="detail-timestamp">🕐 {timeAgo(lastActive)}</div>
         </div>
+
         <button
           className={`detail-checkin-btn ${checkinId ? 'checkout' : ''}`}
           onClick={checkinId ? handleCheckOut : handleCheckIn}
