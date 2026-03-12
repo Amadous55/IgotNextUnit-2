@@ -3,10 +3,10 @@
 :root,
 [data-theme="light"] {
   --bg-primary: #f5f7fa;
-  --bg-secondary: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f1f5f9;
-  --border-color: #e2e8f0;
+  --bg-secondary: #1a1a1a;
+  --bg-card: #1a1a1a;
+  --bg-card-hover: #222222;
+  --border-color: #333333;
   --text-primary: #1a202c;
   --text-secondary: #4a5568;
   --text-muted: #9ca3af;
