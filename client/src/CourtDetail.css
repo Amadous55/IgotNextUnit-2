@@ -3,7 +3,7 @@
   margin: 0 auto;
   color: white;
   min-height: 100vh;
-  background: var(--bg-primary, #0f0f1a);
+  background: #1a1a1a;
 }
 
 /* ── Hero ── */
@@ -103,7 +103,7 @@
 /* ── Content below hero ── */
 .detail-content {
   padding: 24px 20px;
-  background: var(--bg-primary, #0f0f1a);
+  background: #1a1a1a;
 }
 
 .detail-count {
@@ -201,7 +201,7 @@
   height: 100vh;
   color: #666;
   font-size: 1.1rem;
-  background: var(--bg-primary, #0f0f1a);
+  background: #1a1a1a;
 }
 
 /* ── Mobile ── */
