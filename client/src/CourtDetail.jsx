@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './CourtDetail.css';
 import { useToast } from './useToast';
 import { useAuth } from './AuthContext';
+import { useAnimatedCount } from './useAnimatedCount';
 
 function timeAgo(isoString) {
   if (!isoString) return 'No recent activity';
@@ -22,6 +23,7 @@ const CourtDetail = () => {
   const [court, setCourt] = useState(null);
   const [error, setError] = useState(false);
   const [liveCount, setLiveCount] = useState(0);
+  const animatedCount = useAnimatedCount(liveCount);
   const [checkinId, setCheckinId] = useState(() => {
     const stored = localStorage.getItem('igotNext_active_checkin');
     if (!stored) return null;
@@ -177,7 +179,7 @@ const CourtDetail = () => {
         </div>
 
         <div className="detail-count">
-          🏀 <strong>{liveCount}</strong> players on the court right now
+          🏀 <strong>{animatedCount}</strong> players on the court right now
           <div className="detail-timestamp">🕐 {timeAgo(lastActive)}</div>
         </div>
 
