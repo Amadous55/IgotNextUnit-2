@@ -15,10 +15,10 @@
   --nav-bg: #ffffff;
   --nav-text: #1a1a1a;
   --nav-border: #e0e0e0;
-  --nav-search-bg: #ffffff;
-  --nav-search-border: #ccc;
-  --nav-search-text: #1a1a1a;
-  --nav-search-placeholder: #999;
+  --nav-search-bg: #222222;
+  --nav-search-border: #444;
+  --nav-search-text: #ffffff;
+  --nav-search-placeholder: #888;
   --body-bg: #c85b08;
   --callout-bg: #fff5dc;
   --callout-border: gold;
