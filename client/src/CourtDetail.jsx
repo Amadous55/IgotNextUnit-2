@@ -20,10 +20,13 @@ const CourtDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [court, setCourt] = useState(null);
+  const [error, setError] = useState(false);
   const [liveCount, setLiveCount] = useState(0);
   const [checkinId, setCheckinId] = useState(() => {
-    const stored = localStorage.getItem(`checkin_court_${id}`);
-    return stored ? parseInt(stored, 10) : null;
+    const stored = localStorage.getItem('igotNext_active_checkin');
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    return parsed.courtId === parseInt(id) ? parsed.checkinId : null;
   });
   const [ratingData, setRatingData] = useState({ average: 0, count: 0 });
   const [lastActive, setLastActive] = useState(null);
@@ -34,8 +37,12 @@ const CourtDetail = () => {
 
   useEffect(() => {
     fetch(`/api/courts/${id}`)
-      .then(res => res.json())
-      .then(data => setCourt(data));
+      .then(res => {
+        if (!res.ok) { setError(true); return; }
+        return res.json();
+      })
+      .then(data => { if (data) setCourt(data); })
+      .catch(() => setError(true));
 
     fetch(`/api/courts/${id}/live-count`)
       .then(res => res.json())
@@ -54,15 +61,29 @@ const CourtDetail = () => {
   }, [id]);
 
   const handleCheckIn = () => {
+    if (!user) {
+      showToast('🔒 Please log in to check in to a court.', 'error');
+      return;
+    }
+
+    // If checked into a different court, auto-checkout first
+    const stored = localStorage.getItem('igotNext_active_checkin');
+    if (stored) {
+      const prev = JSON.parse(stored);
+      if (prev.courtId !== parseInt(id)) {
+        fetch(`/api/checkins/${prev.checkinId}`, { method: 'DELETE' });
+      }
+    }
+
     fetch(`/api/courts/${id}/checkins`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ partySize: 1, username: user?.username || null }),
+      body: JSON.stringify({ partySize: 1, username: user.username }),
     })
       .then(res => res.json())
       .then(checkin => {
         setCheckinId(checkin.id);
-        localStorage.setItem(`checkin_court_${id}`, checkin.id);
+        localStorage.setItem('igotNext_active_checkin', JSON.stringify({ courtId: parseInt(id), checkinId: checkin.id }));
         setLiveCount(prev => prev + 1);
         showToast('✅ Checked in! You got next.');
       });
@@ -72,7 +93,7 @@ const CourtDetail = () => {
     fetch(`/api/checkins/${checkinId}`, { method: 'DELETE' })
       .then(() => {
         setCheckinId(null);
-        localStorage.removeItem(`checkin_court_${id}`);
+        localStorage.removeItem('igotNext_active_checkin');
         setLiveCount(prev => Math.max(0, prev - 1));
         showToast('🚪 Checked out. See you next time!');
       });
@@ -97,6 +118,12 @@ const CourtDetail = () => {
 
   const fallbackImg = 'https://images.unsplash.com/photo-1585776245991-01e7fcb6c66b?fit=crop&w=800&q=80';
 
+  if (error) return (
+    <div className="detail-loading">
+      <p>Court not found.</p>
+      <button onClick={() => navigate(-1)} style={{ marginTop: '12px', cursor: 'pointer' }}>← Go Back</button>
+    </div>
+  );
   if (!court) return <div className="detail-loading">Loading...</div>;
 
   const displayStars = hoveredStar || submittedRating || ratingData.average;
