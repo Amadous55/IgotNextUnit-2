@@ -424,3 +424,19 @@ button:hover {
   background: #f97316;
   color: white;
 }
+
+.theme-toggle-btn {
+  background: transparent;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: #999;
+}
