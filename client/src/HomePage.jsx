@@ -1,37 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './HomePage.css';
-import courts from './courts.json';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from './AuthContext';
 import CourtMap from './CourtMap';
 
-// Normalize court data
-const normalizedCourts = courts.map(court => ({
-  id: court["Court ID"],
-  name: court["Name"],
-  neighborhood: court["Neighborhood"],
-  address: court["Address"],
-  ward: court["Ward"],
-  surface: court["Surface"],
-  lighted: court["Lighted"],
-  peakTime: court["Typical Peak Time"],
-  playersNow: court["Players Now"],
-  rating: court["Rating"],
-  notes: court["Notes"],
-  imageUrl: court["imageUrl"] || "https://images.unsplash.com/photo-1585776245991-01e7fcb6c66b?fit=crop&w=800&q=80"
-}));
-
 const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [courts, setCourts] = useState([]);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const filteredCourts = normalizedCourts.filter((court) => {
+  useEffect(() => {
+    fetch('/api/courts')
+      .then(res => res.json())
+      .then(data => setCourts(data))
+      .catch(err => console.error('Failed to fetch courts:', err));
+  }, []);
+
+  const filteredCourts = courts.filter((court) => {
     const query = searchQuery.toLowerCase();
     return (
-      court.name.toLowerCase().includes(query) ||
-      court.neighborhood.toLowerCase().includes(query) ||
-      court.address.toLowerCase().includes(query)
+      (court.name || '').toLowerCase().includes(query) ||
+      (court.city || '').toLowerCase().includes(query)
     );
   });
 
@@ -53,7 +43,9 @@ const HomePage = () => {
           </Link>
           {user ? (
             <div className="nav-user">
-              <span className="nav-username">👋 {user.username}</span>
+              <button className="nav-profile-btn" onClick={() => navigate('/profile')}>
+                👤 {user.username}
+              </button>
               <button className="nav-logout-btn" onClick={logout}>Log Out</button>
             </div>
           ) : (
@@ -87,7 +79,7 @@ const HomePage = () => {
               <Link to={`/court/${court.id}`} key={court.id} style={{ textDecoration: "none" }}>
                 <div
                   className="court-card"
-                  style={{ backgroundImage: `url(${court.imageUrl})` }}
+                  style={{ backgroundImage: `url(${court.imageUrl || "https://images.unsplash.com/photo-1585776245991-01e7fcb6c66b?fit=crop&w=800&q=80"})` }}
                 >
                   <span>{court.name}</span>
                 </div>
