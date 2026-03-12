@@ -216,3 +216,30 @@
   margin-top: 60px;
   font-size: 1rem;
 }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .courts-page {
+    padding: 16px 12px;
+  }
+
+  .courts-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .filter-buttons {
+    flex-wrap: wrap;
+  }
+
+  .court-card-img {
+    height: 150px;
+  }
+
+  .court-card-name {
+    font-size: 1.1rem;
+  }
+
+  .court-card-body {
+    padding: 12px 14px 16px;
+  }
+}

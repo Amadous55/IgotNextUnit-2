@@ -184,3 +184,49 @@
 
 .star-filled { color: #f97316; }
 .star-empty  { color: #333; }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .profile-page {
+    padding: 16px 12px 48px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .profile-avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 1.6rem;
+  }
+
+  .profile-username {
+    font-size: 1.3rem;
+  }
+
+  .profile-stats {
+    gap: 8px;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .profile-section {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .profile-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
