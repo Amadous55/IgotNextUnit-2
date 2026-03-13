@@ -23,6 +23,12 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
 
+  // Follow state
+  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [followInput, setFollowInput] = useState('');
+  const [followMsg, setFollowMsg] = useState('');
+
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -32,15 +38,52 @@ const Profile = () => {
     Promise.all([
       fetch(`/api/users/${user.username}/checkins`).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
       fetch(`/api/users/${user.username}/ratings`).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-    ]).then(([checkinsData, ratingsData]) => {
+      fetch(`/api/users/${user.username}/following`).then(r => r.ok ? r.json() : []),
+      fetch(`/api/users/${user.username}/followers`).then(r => r.ok ? r.json() : []),
+    ]).then(([checkinsData, ratingsData, followingData, followersData]) => {
       setCheckins(checkinsData);
       setRatings(ratingsData);
+      setFollowing(followingData);
+      setFollowers(followersData);
       setLoading(false);
     }).catch(() => {
       setFetchError(true);
       setLoading(false);
     });
   }, [user, navigate]);
+
+  const handleFollow = async () => {
+    const target = followInput.trim();
+    if (!target) return;
+    setFollowMsg('');
+    try {
+      const res = await fetch('/api/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ followerUsername: user.username, followingUsername: target }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setFollowMsg(data || 'Error'); return; }
+      setFollowing(prev => [...prev, { username: target }]);
+      setFollowInput('');
+      setFollowMsg(`Now following @${target}!`);
+    } catch {
+      setFollowMsg('Could not connect to server.');
+    }
+  };
+
+  const handleUnfollow = async (targetUsername) => {
+    try {
+      await fetch('/api/follow', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ followerUsername: user.username, followingUsername: targetUsername }),
+      });
+      setFollowing(prev => prev.filter(f => f.username !== targetUsername));
+    } catch {
+      setFollowMsg('Could not unfollow. Try again.');
+    }
+  };
 
   if (!user) return null;
 
@@ -95,6 +138,14 @@ const Profile = () => {
           </span>
           <span className="stat-label">Visits to Fav Court</span>
         </div>
+        <div className="stat-card">
+          <span className="stat-number">{following.length}</span>
+          <span className="stat-label">Following</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-number">{followers.length}</span>
+          <span className="stat-label">Followers</span>
+        </div>
       </div>
 
       {favoriteCourt && (
@@ -120,6 +171,44 @@ const Profile = () => {
                     onClick={() => navigate(`/court/${c.court?.id}`)}>
                     <span className="history-court">{c.court?.name || 'Unknown Court'}</span>
                     <span className="history-time">{timeAgo(c.createdAt)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Following Section */}
+          <div className="profile-section">
+            <h2 className="section-title">👥 Following</h2>
+
+            {/* Follow someone */}
+            <div className="follow-input-row">
+              <input
+                type="text"
+                className="follow-input"
+                placeholder="Enter a username..."
+                value={followInput}
+                onChange={e => setFollowInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleFollow()}
+              />
+              <button className="follow-btn" onClick={handleFollow}>Follow</button>
+            </div>
+            {followMsg && <p className="follow-msg">{followMsg}</p>}
+
+            {/* Following list */}
+            {following.length === 0 ? (
+              <p className="empty-msg">You're not following anyone yet.</p>
+            ) : (
+              <ul className="history-list" style={{ marginTop: '12px' }}>
+                {following.map(f => (
+                  <li key={f.username} className="history-item">
+                    <span className="history-court">@{f.username}</span>
+                    <button
+                      className="unfollow-btn"
+                      onClick={() => handleUnfollow(f.username)}
+                    >
+                      Unfollow
+                    </button>
                   </li>
                 ))}
               </ul>
