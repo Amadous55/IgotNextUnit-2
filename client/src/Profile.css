@@ -73,7 +73,7 @@
 
 .profile-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -185,6 +185,58 @@
 .star-filled { color: #f97316; }
 .star-empty  { color: #333; }
 
+/* ── Follow Section ── */
+.follow-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.follow-input {
+  flex: 1;
+  background: var(--bg-card, #12121f);
+  border: 1px solid var(--border-color, #2a2a40);
+  border-radius: 8px;
+  color: white;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.follow-input:focus { border-color: #f97316; }
+.follow-input::placeholder { color: #555; }
+
+.follow-btn {
+  background: #f97316;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.follow-btn:hover { background: #ea580c; }
+
+.follow-msg {
+  font-size: 0.85rem;
+  color: #f97316;
+  margin: 4px 0 8px;
+}
+
+.unfollow-btn {
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #aaa;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.unfollow-btn:hover { border-color: #f97316; color: #f97316; }
+
 /* ── Mobile ── */
 @media (max-width: 600px) {
   .profile-page {
@@ -222,6 +274,12 @@
 
   .profile-section {
     padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-stats {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
