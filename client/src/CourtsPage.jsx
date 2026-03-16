@@ -75,25 +75,28 @@ const CourtsPage = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ partySize: 1, username: user.username }),
     })
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('Check-in failed'); return res.json(); })
       .then(checkin => {
         const next = { courtId: id, checkinId: checkin.id };
         setActiveCheckin(next);
         localStorage.setItem('igotNext_active_checkin', JSON.stringify(next));
         setCourts(prev => prev.map(c => c.id === id ? { ...c, liveCount: c.liveCount + 1 } : c));
         showToast('✅ Checked in! You got next.');
-      });
+      })
+      .catch(() => showToast('❌ Check-in failed. Try again.', 'error'));
   };
 
   const handleCheckOut = (id) => {
     if (!activeCheckin) return;
     fetch(`/api/checkins/${activeCheckin.checkinId}`, { method: 'DELETE' })
+      .then(res => { if (!res.ok) throw new Error('Check-out failed'); })
       .then(() => {
         setActiveCheckin(null);
         localStorage.removeItem('igotNext_active_checkin');
         setCourts(prev => prev.map(c => c.id === id ? { ...c, liveCount: Math.max(0, c.liveCount - 1) } : c));
         showToast('🚪 Checked out. See you next time!');
-      });
+      })
+      .catch(() => showToast('❌ Check-out failed. Try again.', 'error'));
   };
 
   const filtered = courts.filter(c => {

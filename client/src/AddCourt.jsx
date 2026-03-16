@@ -6,6 +6,7 @@ function AddCourt() {
   const [comment, setComment] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [addedCourts, setAddedCourts] = useState([]);
 
   const handleImageUpload = (e) => {
@@ -17,14 +18,15 @@ function AddCourt() {
   };
 
   const handleSubmit = () => {
-    if (!courtName) return;
+    if (!courtName.trim()) return;
+    setSubmitError('');
 
     fetch('/api/courts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: courtName }),
+      body: JSON.stringify({ name: courtName.trim() }),
     })
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('Failed to submit court'); return res.json(); })
       .then(newCourt => {
         setAddedCourts(prev => [...prev, { ...newCourt, comment, image: imageFile }]);
         setCourtName("");
@@ -32,7 +34,8 @@ function AddCourt() {
         setImageFile(null);
         setSubmitted(true);
         setTimeout(() => setSubmitted(false), 2500);
-      });
+      })
+      .catch(() => setSubmitError('❌ Could not submit court. Make sure the server is running.'));
   };
 
   const handleDelete = (id) => {
@@ -68,6 +71,9 @@ function AddCourt() {
 
         {submitted && (
           <p className="submitted-msg">✅ Court successfully submitted!</p>
+        )}
+        {submitError && (
+          <p className="submitted-msg" style={{ color: '#e74c3c' }}>{submitError}</p>
         )}
       </div>
 

@@ -51,15 +51,18 @@ const CourtDetail = () => {
       .then(data => {
         const count = typeof data === 'object' ? data.playerCount : data;
         setLiveCount(count);
-      });
+      })
+      .catch(() => {});
 
     fetch(`/api/courts/${id}/ratings/average`)
       .then(res => res.json())
-      .then(data => setRatingData({ average: data.average, count: data.count }));
+      .then(data => setRatingData({ average: data.average, count: data.count }))
+      .catch(() => {});
 
     fetch(`/api/courts/${id}/checkins`)
       .then(res => res.json())
-      .then(data => setLastActive(data[0]?.createdAt || null));
+      .then(data => setLastActive(data[0]?.createdAt || null))
+      .catch(() => {});
   }, [id]);
 
   const handleCheckIn = () => {
@@ -81,40 +84,49 @@ const CourtDetail = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ partySize: 1, username: user.username }),
     })
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('Check-in failed'); return res.json(); })
       .then(checkin => {
         setCheckinId(checkin.id);
         localStorage.setItem('igotNext_active_checkin', JSON.stringify({ courtId: parseInt(id), checkinId: checkin.id }));
         setLiveCount(prev => prev + 1);
         showToast('✅ Checked in! You got next.');
-      });
+      })
+      .catch(() => showToast('❌ Check-in failed. Try again.', 'error'));
   };
 
   const handleCheckOut = () => {
     fetch(`/api/checkins/${checkinId}`, { method: 'DELETE' })
+      .then(res => { if (!res.ok) throw new Error('Check-out failed'); })
       .then(() => {
         setCheckinId(null);
         localStorage.removeItem('igotNext_active_checkin');
         setLiveCount(prev => Math.max(0, prev - 1));
         showToast('🚪 Checked out. See you next time!');
-      });
+      })
+      .catch(() => showToast('❌ Check-out failed. Try again.', 'error'));
   };
 
   const handleRate = (score) => {
     if (submittedRating) return;
+    if (!user) {
+      showToast('🔒 Please log in to rate a court.', 'error');
+      return;
+    }
     fetch(`/api/courts/${id}/ratings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ score, username: user?.username || null }),
+      body: JSON.stringify({ score, username: user.username }),
     })
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('Rating failed'); return res.json(); })
       .then(() => {
         setSubmittedRating(score);
         showToast(`⭐ Thanks for rating this court ${score}/5!`);
         fetch(`/api/courts/${id}/ratings/average`)
           .then(res => res.json())
-          .then(data => setRatingData({ average: data.average, count: data.count }));
-      });
+          .then(data => setRatingData({ average: data.average, count: data.count }))
+          .catch(() => {});
+      })
+      .catch(() => showToast('❌ Could not submit rating. Try again.', 'error'));
   };
 
   const fallbackImg = 'https://images.unsplash.com/photo-1585776245991-01e7fcb6c66b?fit=crop&w=800&q=80';
