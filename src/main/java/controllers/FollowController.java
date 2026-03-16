@@ -34,13 +34,13 @@ public class FollowController {
         Optional<User> following = userRepository.findByUsername(followingUsername);
 
         if (follower.isEmpty() || following.isEmpty()) {
-            return ResponseEntity.badRequest().body("User not found");
+            return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
         }
         if (followerUsername.equals(followingUsername)) {
-            return ResponseEntity.badRequest().body("Cannot follow yourself");
+            return ResponseEntity.badRequest().body(Map.of("error", "Cannot follow yourself"));
         }
         if (followRepository.existsByFollowerAndFollowing(follower.get(), following.get())) {
-            return ResponseEntity.badRequest().body("Already following");
+            return ResponseEntity.badRequest().body(Map.of("error", "Already following"));
         }
 
         Follow follow = new Follow(follower.get(), following.get());
@@ -58,7 +58,7 @@ public class FollowController {
         Optional<User> following = userRepository.findByUsername(followingUsername);
 
         if (follower.isEmpty() || following.isEmpty()) {
-            return ResponseEntity.badRequest().body("User not found");
+            return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
         }
 
         followRepository.deleteByFollowerAndFollowing(follower.get(), following.get());

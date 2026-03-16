@@ -63,7 +63,7 @@ const Profile = () => {
         body: JSON.stringify({ followerUsername: user.username, followingUsername: target }),
       });
       const data = await res.json();
-      if (!res.ok) { setFollowMsg(data || 'Error'); return; }
+      if (!res.ok) { setFollowMsg(data?.error || 'Error'); return; }
       setFollowing(prev => [...prev, { username: target }]);
       setFollowInput('');
       setFollowMsg(`Now following @${target}!`);
@@ -74,11 +74,12 @@ const Profile = () => {
 
   const handleUnfollow = async (targetUsername) => {
     try {
-      await fetch('/api/follow', {
+      const res = await fetch('/api/follow', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ followerUsername: user.username, followingUsername: targetUsername }),
       });
+      if (!res.ok) { setFollowMsg('Could not unfollow. Try again.'); return; }
       setFollowing(prev => prev.filter(f => f.username !== targetUsername));
     } catch {
       setFollowMsg('Could not unfollow. Try again.');
