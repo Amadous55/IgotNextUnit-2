@@ -1,28 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
 import './CourtDetail.css';
+import { useToast } from './useToast';
+import { useAuth } from './AuthContext';
+import { useAnimatedCount } from './useAnimatedCount';
 
 function timeAgo(isoString) {
   if (!isoString) return 'No recent activity';
   const seconds = Math.floor((Date.now() - new Date(isoString)) / 1000);
-  if (seconds < 60) return 'just now';
+  if (seconds < 60) return 'Active just now';
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return `Last active ${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `Last active ${hours}h ago`;
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return `Last active ${days}d ago`;
 }
 
 const CourtDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
-
   const [court, setCourt] = useState(null);
+  const [error, setError] = useState(false);
   const [liveCount, setLiveCount] = useState(0);
-  const [checkinId, setCheckinId] = useState(null);
+  const animatedCount = useAnimatedCount(liveCount);
+  const [checkinId, setCheckinId] = useState(() => {
+    const stored = localStorage.getItem('igotNext_active_checkin');
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    return parsed.courtId === parseInt(id) ? parsed.checkinId : null;
+  });
   const [ratingData, setRatingData] = useState({ average: 0, count: 0 });
   const [lastActive, setLastActive] = useState(null);
   const [hoveredStar, setHoveredStar] = useState(0);
@@ -30,67 +37,104 @@ const CourtDetail = () => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
+  const { showToast, ToastContainer } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetch(`/api/courts/${id}`)
-      .then(res => res.json())
-      .then(data => setCourt(data));
+      .then(res => {
+        if (!res.ok) { setError(true); return; }
+        return res.json();
+      })
+      .then(data => { if (data) setCourt(data); })
+      .catch(() => setError(true));
 
     fetch(`/api/courts/${id}/live-count`)
       .then(res => res.json())
       .then(data => {
         const count = typeof data === 'object' ? data.playerCount : data;
         setLiveCount(count);
-      });
+      })
+      .catch(() => {});
 
     fetch(`/api/courts/${id}/ratings/average`)
       .then(res => res.json())
-      .then(data => setRatingData({ average: data.average, count: data.count }));
+      .then(data => setRatingData({ average: data.average, count: data.count }))
+      .catch(() => {});
 
     fetch(`/api/courts/${id}/checkins`)
       .then(res => res.json())
-      .then(data => setLastActive(data[0]?.createdAt || null));
+      .then(data => setLastActive(data[0]?.createdAt || null))
+      .catch(() => {});
 
     fetch(`/api/courts/${id}/comments`)
       .then(res => res.json())
-      .then(data => setComments(data));
+      .then(data => setComments(data))
+      .catch(() => {});
   }, [id]);
 
   const handleCheckIn = () => {
+    if (!user) {
+      showToast('🔒 Please log in to check in to a court.', 'error');
+      return;
+    }
+
+    const stored = localStorage.getItem('igotNext_active_checkin');
+    if (stored) {
+      const prev = JSON.parse(stored);
+      if (prev.courtId !== parseInt(id)) {
+        fetch(`/api/checkins/${prev.checkinId}`, { method: 'DELETE' });
+      }
+    }
+
     fetch(`/api/courts/${id}/checkins`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ partySize: 1 }),
+      body: JSON.stringify({ partySize: 1, username: user.username }),
     })
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('Check-in failed'); return res.json(); })
       .then(checkin => {
         setCheckinId(checkin.id);
+        localStorage.setItem('igotNext_active_checkin', JSON.stringify({ courtId: parseInt(id), checkinId: checkin.id }));
         setLiveCount(prev => prev + 1);
-      });
+        showToast('✅ Checked in! You got next.');
+      })
+      .catch(() => showToast('❌ Check-in failed. Try again.', 'error'));
   };
 
   const handleCheckOut = () => {
     fetch(`/api/checkins/${checkinId}`, { method: 'DELETE' })
+      .then(res => { if (!res.ok) throw new Error('Check-out failed'); })
       .then(() => {
         setCheckinId(null);
+        localStorage.removeItem('igotNext_active_checkin');
         setLiveCount(prev => Math.max(0, prev - 1));
-      });
+        showToast('🚪 Checked out. See you next time!');
+      })
+      .catch(() => showToast('❌ Check-out failed. Try again.', 'error'));
   };
 
   const handleRate = (score) => {
     if (submittedRating) return;
+    if (!user) {
+      showToast('🔒 Please log in to rate a court.', 'error');
+      return;
+    }
     fetch(`/api/courts/${id}/ratings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ score }),
+      body: JSON.stringify({ score, username: user.username }),
     })
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('Rating failed'); return res.json(); })
       .then(() => {
         setSubmittedRating(score);
+        showToast(`⭐ Thanks for rating this court ${score}/5!`);
         fetch(`/api/courts/${id}/ratings/average`)
           .then(res => res.json())
-          .then(data => setRatingData({ average: data.average, count: data.count }));
-      });
+          .then(data => setRatingData({ average: data.average, count: data.count }))
+          .catch(() => {});
+      })
+      .catch(() => showToast('❌ Could not submit rating. Try again.', 'error'));
   };
 
   const handleCommentSubmit = (e) => {
@@ -100,48 +144,62 @@ const CourtDetail = () => {
     fetch(`/api/courts/${id}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: commentText,
-        username: user?.username || 'Anonymous',
-      }),
+      body: JSON.stringify({ text: commentText, username: user?.username || 'Anonymous' }),
     })
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('Comment failed'); return res.json(); })
       .then(newComment => {
         setComments(prev => [newComment, ...prev]);
         setCommentText('');
       })
+      .catch(() => showToast('❌ Could not post comment. Try again.', 'error'))
       .finally(() => setSubmittingComment(false));
   };
 
   const handleDeleteComment = (commentId) => {
     fetch(`/api/comments/${commentId}`, { method: 'DELETE' })
-      .then(() => setComments(prev => prev.filter(c => c.id !== commentId)));
+      .then(res => { if (!res.ok) throw new Error(); })
+      .then(() => setComments(prev => prev.filter(c => c.id !== commentId)))
+      .catch(() => showToast('❌ Could not delete comment.', 'error'));
   };
 
   const fallbackImg = 'https://images.unsplash.com/photo-1585776245991-01e7fcb6c66b?fit=crop&w=800&q=80';
 
+  if (error) return (
+    <div className="detail-loading">
+      <p>Court not found.</p>
+      <button onClick={() => navigate(-1)} style={{ marginTop: '12px', cursor: 'pointer' }}>← Go Back</button>
+    </div>
+  );
   if (!court) return <div className="detail-loading">Loading...</div>;
 
   const displayStars = hoveredStar || submittedRating || ratingData.average;
 
   return (
     <div className="court-detail-page">
-      <img
-        src={court.imageUrl || fallbackImg}
-        alt={court.name}
-        className="detail-hero-img"
-      />
-      <div className="detail-content">
-        <button className="detail-back-btn" onClick={() => navigate(-1)}>← Back</button>
-        <h1 className="detail-name">{court.name}</h1>
-        <div className="detail-meta">
-          <span>📍 {court.city || 'N/A'}</span>
-          <span className={`detail-badge ${court.outdoor ? 'outdoor' : 'indoor'}`}>
-            {court.outdoor ? '☀️ Outdoor' : '🏠 Indoor'}
-          </span>
-        </div>
+      <ToastContainer />
 
-        {/* Rating */}
+      {/* Hero — full-bleed image with overlaid name */}
+      <div className="detail-hero">
+        <img
+          src={court.imageUrl || fallbackImg}
+          alt={court.name}
+          className="detail-hero-img"
+        />
+        <div className="detail-hero-overlay" />
+        <div className="detail-hero-content">
+          <button className="detail-back-btn" onClick={() => navigate(-1)}>← Back</button>
+          <div className="detail-hero-bottom">
+            <span className={`detail-badge ${court.outdoor ? 'outdoor' : 'indoor'}`}>
+              {court.outdoor ? '☀️ Outdoor' : '🏠 Indoor'}
+            </span>
+            <h1 className="detail-name">{court.name}</h1>
+            <p className="detail-location">📍 {court.city || 'N/A'}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Content below hero */}
+      <div className="detail-content">
         <div className="rating-section">
           <div className="stars-display">
             {[1, 2, 3, 4, 5].map(star => (
@@ -165,13 +223,11 @@ const CourtDetail = () => {
           </span>
         </div>
 
-        {/* Live count */}
         <div className="detail-count">
-          🏀 <strong>{liveCount}</strong> players on the court right now
+          🏀 <strong>{animatedCount}</strong> players on the court right now
           <div className="detail-timestamp">🕐 {timeAgo(lastActive)}</div>
         </div>
 
-        {/* Check in/out */}
         <button
           className={`detail-checkin-btn ${checkinId ? 'checkout' : ''}`}
           onClick={checkinId ? handleCheckOut : handleCheckIn}

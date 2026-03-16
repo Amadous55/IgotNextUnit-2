@@ -4,8 +4,6 @@ body, html {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
-  background-color: #c85b08;
-  color: #1a1a1a;
 }
 
 .homepage-container {
@@ -13,19 +11,24 @@ body, html {
   flex-direction: column;
   gap: 2rem;
   padding-bottom: 4rem;
+  background: var(--body-bg, #f5f7fa);
+  min-height: 100vh;
+  transition: background 0.3s;
 }
 
 
 .top-nav {
   position: sticky;
   top: 0;
-  background-color: #ffffff;
+  background-color: var(--nav-bg, #ffffff);
+  color: var(--nav-text, #1a1a1a);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--nav-border, #e0e0e0);
   z-index: 999;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 .logo {
@@ -37,8 +40,15 @@ body, html {
   margin: 0 1rem;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--nav-search-border, #ccc);
+  background: var(--nav-search-bg, #f5f5f5);
+  color: var(--nav-search-text, #1a1a1a);
   font-size: 1rem;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.search-bar::placeholder {
+  color: var(--nav-search-placeholder, #999);
 }
 
 .nav-actions {
@@ -192,8 +202,10 @@ body, html {
 .community-callout {
   padding: 2rem;
   text-align: center;
-  background-color: #fff5dc;
-  border-top: 2px solid gold;
+  background-color: var(--callout-bg, #fff5dc);
+  border-top: 2px solid var(--callout-border, gold);
+  color: var(--callout-text, #333);
+  transition: background 0.3s;
 }
 
 .community-callout h2 {
@@ -219,18 +231,71 @@ body, html {
 
 @media (max-width: 768px) {
   .top-nav {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0.75rem 1rem;
+  }
+
+  .search-bar {
+    order: 3;
+    width: 100%;
+    margin: 0;
+    flex: none;
   }
 
   .nav-actions {
-    width: 100%;
-    justify-content: space-between;
-    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .court-section {
-    padding: 1rem;
+    padding: 0.75rem;
+  }
+
+  .court-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .court-card {
+    height: 130px;
+    font-size: 0.95rem;
+  }
+
+  .hero {
+    padding: 2.5rem 1rem;
+    border-radius: 0;
+  }
+
+  .tagline {
+    font-size: 1.8rem;
+  }
+
+  .hero-subtext {
+    font-size: 1rem;
+  }
+
+  .community-callout {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .court-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .nav-actions {
+    gap: 6px;
+  }
+
+  .find-courts-btn,
+  .nav-login-btn,
+  .nav-profile-btn {
+    font-size: 0.8rem;
+    padding: 6px 10px;
   }
 }
 /* Typography */
@@ -355,4 +420,35 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.4);
   padding: 0.4rem 1rem;
   border-radius: 8px;
+}
+.nav-profile-btn {
+  background: transparent;
+  border: 1px solid #f97316;
+  color: #f97316;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-profile-btn:hover {
+  background: #f97316;
+  color: white;
+}
+
+.theme-toggle-btn {
+  background: transparent;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: #999;
 }

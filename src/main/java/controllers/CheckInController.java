@@ -23,9 +23,9 @@ public class CheckInController {
         this.courtRepository = courtRepository;
     }
 
-    // Simple request body: { "partySize": 3 }
     public static class CreateCheckInRequest {
         public Integer partySize;
+        public String username;
     }
 
     // POST /api/courts/{courtId}/checkins
@@ -39,19 +39,27 @@ public class CheckInController {
         Court court = courtRepository.findById(courtId).orElse(null);
         if (court == null) return ResponseEntity.notFound().build();
 
-        CheckIn saved = checkInRepository.save(new CheckIn(court, body.partySize));
+        CheckIn checkin = new CheckIn(court, body.partySize);
+        if (body.username != null) checkin.setUsername(body.username);
+        CheckIn saved = checkInRepository.save(checkin);
         return ResponseEntity.ok(saved);
-
     }
+
     // GET /api/courts/{courtId}/checkins
     @GetMapping("/courts/{courtId}/checkins")
     public ResponseEntity<List<CheckIn>> getCheckInsForCourt(@PathVariable Long courtId) {
         if (!courtRepository.existsById(courtId)) return ResponseEntity.notFound().build();
-
         List<CheckIn> checkIns = checkInRepository.findByCourt_IdOrderByCreatedAtDesc(courtId);
         return ResponseEntity.ok(checkIns);
-
     }
+
+    // GET /api/users/{username}/checkins
+    @GetMapping("/users/{username}/checkins")
+    public ResponseEntity<List<CheckIn>> getCheckInsForUser(@PathVariable String username) {
+        List<CheckIn> checkIns = checkInRepository.findByUsernameOrderByCreatedAtDesc(username);
+        return ResponseEntity.ok(checkIns);
+    }
+
     // GET /api/courts/{courtId}/live-count?minutes=90
     @GetMapping("/courts/{courtId}/live-count")
     public ResponseEntity<Map<String, Object>> liveCount(@PathVariable Long courtId,
@@ -67,13 +75,13 @@ public class CheckInController {
                 "playerCount", playerCount
         ));
     }
+
     // DELETE /api/checkins/{id}
     @DeleteMapping("/checkins/{id}")
     public ResponseEntity<Void> deleteCheckIn(@PathVariable("id") Long id) {
         if (!checkInRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-
         checkInRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

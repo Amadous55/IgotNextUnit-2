@@ -34,6 +34,10 @@ public class CheckIn {
             nullable = false
     )
     private Integer partySize;
+
+    @Column(nullable = true)
+    private String username;
+
     @Column(
             nullable = false
     )
@@ -79,4 +83,7 @@ public class CheckIn {
     public void setPartySize(Integer partySize) {
         this.partySize = partySize;
     }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 }

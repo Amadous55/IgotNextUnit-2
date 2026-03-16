@@ -1,3 +1,55 @@
+/* ── Theme variables ── */
+/* Light = original app colors (default) */
+:root,
+[data-theme="light"] {
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #1a1a1a;
+  --bg-card: #1a1a1a;
+  --bg-card-hover: #222222;
+  --border-color: #333333;
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #9ca3af;
+  --accent: #f97316;
+  --accent-hover: #ea580c;
+  --nav-bg: #ffffff;
+  --nav-text: #1a1a1a;
+  --nav-border: #e0e0e0;
+  --nav-search-bg: #222222;
+  --nav-search-border: #444;
+  --nav-search-text: #ffffff;
+  --nav-search-placeholder: #888;
+  --body-bg: #c85b08;
+  --callout-bg: #fff5dc;
+  --callout-border: gold;
+  --callout-text: #333;
+}
+
+/* Dark = new dark theme */
+[data-theme="dark"] {
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-card: #1a1a1a;
+  --bg-card-hover: #1e1e35;
+  --border-color: #2a2a40;
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --text-muted: #666666;
+  --accent: #f97316;
+  --accent-hover: #ea580c;
+  --nav-bg: #1a1a2e;
+  --nav-text: #ffffff;
+  --nav-border: #2a2a40;
+  --nav-search-bg: #2a2a40;
+  --nav-search-border: #444;
+  --nav-search-text: #ffffff;
+  --nav-search-placeholder: #888;
+  --body-bg: #111111;
+  --callout-bg: #1a1a2e;
+  --callout-border: #f97316;
+  --callout-text: #ccc;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -31,7 +83,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #111;
+  background-color: var(--body-bg, #111);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 h1 {
