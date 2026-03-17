@@ -29,6 +29,9 @@ const CourtsPage = () => {
   const { showToast, ToastContainer } = useToast();
   const { user } = useAuth();
 
+  // Set browser tab title for this page
+  useEffect(() => { document.title = 'I Got Next — Courts'; }, []);
+
   useEffect(() => {
     fetch('/api/courts')
       .then(res => { if (!res.ok) throw new Error('Failed to load courts'); return res.json(); })

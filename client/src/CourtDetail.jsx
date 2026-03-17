@@ -37,6 +37,9 @@ const CourtDetail = () => {
   const { showToast, ToastContainer } = useToast();
   const { user } = useAuth();
 
+  // Set browser tab title; updates once court name loads
+  useEffect(() => { document.title = court ? `${court.name} — I Got Next` : 'Court Detail — I Got Next'; }, [court]);
+
   useEffect(() => {
     fetch(`/api/courts/${id}`)
       .then(res => {

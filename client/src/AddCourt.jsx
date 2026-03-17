@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './AddCourt.css';
 
 function AddCourt() {
   const [courtName, setCourtName] = useState("");
+
+  // Set browser tab title for this page
+  useEffect(() => { document.title = 'Add a Court — I Got Next'; }, []);
   const [comment, setComment] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [submitted, setSubmitted] = useState(false);

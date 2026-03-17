@@ -12,6 +12,9 @@ const HomePage = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
+  // Set browser tab title for this page
+  useEffect(() => { document.title = 'I Got Next — Find Courts'; }, []);
+
   useEffect(() => {
     fetch('/api/courts')
       .then(res => res.json())
