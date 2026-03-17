@@ -45,7 +45,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page">
+    <main className="login-page">
       <div className="login-card">
         <div className="login-logo">🏀</div>
         <h1 className="login-title">IgotNext</h1>
@@ -126,7 +126,7 @@ const LoginPage = () => {
           Continue without account →
         </button>
       </div>
-    </div>
+    </main>
   );
 };
 

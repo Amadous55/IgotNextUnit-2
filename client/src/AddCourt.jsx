@@ -43,7 +43,7 @@ function AddCourt() {
   };
 
   return (
-    <div className="add-court-container">
+    <main className="add-court-container">
       <h2>Add a New Court</h2>
 
       <div className="form">
@@ -86,7 +86,7 @@ function AddCourt() {
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }
 
