@@ -24,6 +24,8 @@ const CourtDetail = () => {
   const [error, setError] = useState(false);
   const [liveCount, setLiveCount] = useState(0);
   const animatedCount = useAnimatedCount(liveCount);
+  // Lazy initializer: restore active check-in from localStorage on mount
+  // Only counts as active if it belongs to THIS court
   const [checkinId, setCheckinId] = useState(() => {
     const stored = localStorage.getItem('igotNext_active_checkin');
     if (!stored) return null;
@@ -39,6 +41,9 @@ const CourtDetail = () => {
   const [submittingComment, setSubmittingComment] = useState(false);
   const { showToast, ToastContainer } = useToast();
   const { user } = useAuth();
+
+  // Set browser tab title; updates once court name loads
+  useEffect(() => { document.title = court ? `${court.name} — I Got Next` : 'Court Detail — I Got Next'; }, [court]);
 
   useEffect(() => {
     fetch(`/api/courts/${id}`)

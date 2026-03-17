@@ -131,3 +131,35 @@
 .login-skip:hover {
   color: #aaa;
 }
+
+/* ── Responsive: tablet ── */
+@media (max-width: 600px) {
+  .login-card {
+    padding: 28px 20px;
+    border-radius: 12px;
+  }
+
+  .login-title {
+    font-size: 1.6rem;
+  }
+
+  .login-input,
+  .login-submit {
+    font-size: 0.95rem;
+  }
+}
+
+/* ── Responsive: small mobile ── */
+@media (max-width: 380px) {
+  .login-logo {
+    font-size: 2.2rem;
+  }
+
+  .login-title {
+    font-size: 1.3rem;
+  }
+
+  .login-card {
+    padding: 20px 14px;
+  }
+}

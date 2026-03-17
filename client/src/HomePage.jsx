@@ -3,6 +3,7 @@ import './HomePage.css';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from './AuthContext';
 import { useTheme } from './ThemeContext';
+import { useToast } from './useToast';
 import CourtMap from './CourtMap';
 
 const HomePage = () => {
@@ -10,13 +11,17 @@ const HomePage = () => {
   const [courts, setCourts] = useState([]);
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { showToast, ToastContainer } = useToast();
   const navigate = useNavigate();
+
+  // Set browser tab title for this page
+  useEffect(() => { document.title = 'I Got Next — Find Courts'; }, []);
 
   useEffect(() => {
     fetch('/api/courts')
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => setCourts(data))
-      .catch(err => console.error('Failed to fetch courts:', err));
+      .catch(() => showToast('❌ Could not load courts. Please try again.'));
   }, []);
 
   const filteredCourts = courts.filter((court) => {
@@ -110,6 +115,7 @@ const HomePage = () => {
           <button className="secondary-cta">🏀 Can’t find your court? Add one!</button>
         </Link>
       </section>
+      <ToastContainer />
     </div>
   );
 };

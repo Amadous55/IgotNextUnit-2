@@ -29,6 +29,9 @@ const Profile = () => {
   const [followInput, setFollowInput] = useState('');
   const [followMsg, setFollowMsg] = useState('');
 
+  // Set browser tab title for this page
+  useEffect(() => { document.title = user ? `${user.username} — I Got Next` : 'Profile — I Got Next'; }, [user]);
+
   useEffect(() => {
     if (!user) {
       navigate('/login');

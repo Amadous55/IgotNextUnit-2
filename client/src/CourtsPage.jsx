@@ -4,6 +4,8 @@ import './CourtsPage.css';
 import { useToast } from './useToast';
 import { useAuth } from './AuthContext';
 
+// Converts an ISO timestamp into a human-readable "time ago" string
+// Used to show when a court was last checked into
 function timeAgo(isoString) {
   if (!isoString) return 'No recent activity';
   const seconds = Math.floor((Date.now() - new Date(isoString)) / 1000);
@@ -28,6 +30,9 @@ const CourtsPage = () => {
   const [loadError, setLoadError] = useState(false);
   const { showToast, ToastContainer } = useToast();
   const { user } = useAuth();
+
+  // Set browser tab title for this page
+  useEffect(() => { document.title = 'I Got Next — Courts'; }, []);
 
   useEffect(() => {
     fetch('/api/courts')

@@ -1,0 +1,52 @@
+.not-found-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background-color: var(--bg-primary);
+}
+
+.not-found-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.not-found-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  animation: bounce 1.2s infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-16px); }
+}
+
+.not-found-title {
+  font-size: 6rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0;
+}
+
+.not-found-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin: 0.75rem 0 2rem;
+}
+
+.not-found-btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background-color: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.not-found-btn:hover {
+  opacity: 0.85;
+}

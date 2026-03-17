@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import './LoginPage.css';
@@ -7,6 +7,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { login, register } = useAuth();
   const [tab, setTab] = useState('login'); // 'login' | 'register'
+
+  // Set browser tab title for this page
+  useEffect(() => { document.title = 'Login — I Got Next'; }, []);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +45,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page">
+    <main className="login-page">
       <div className="login-card">
         <div className="login-logo">🏀</div>
         <h1 className="login-title">IgotNext</h1>
@@ -123,7 +126,7 @@ const LoginPage = () => {
           Continue without account →
         </button>
       </div>
-    </div>
+    </main>
   );
 };
 

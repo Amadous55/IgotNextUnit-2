@@ -9,6 +9,7 @@ import Footer from './footer';
 import AddCourt from './AddCourt';
 import Profile from './Profile';
 import LoginPage from './LoginPage';
+import NotFound from './NotFound';
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
           <Route path="/added-courts" element={<AddCourt />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<LoginPage />} />
+          {/* Catch-all route for unknown paths */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </AuthProvider>
